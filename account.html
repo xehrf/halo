@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет — Halo</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body id="accountPage">
+  <header class="header" style="min-height:auto;">
+    <nav class="nav">
+      <a href="index.html" class="logo">Halo</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="account.html">Кабинет</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <h1 class="page-title">Личный кабинет</h1>
+
+  <section class="catalog-section">
+    <div id="accountMessage" class="halo-message" role="status" aria-live="polite"></div>
+
+    <div class="halo-account-grid">
+      <article class="product-card">
+        <h3>Регистрация</h3>
+        <form id="registerForm" class="order-form">
+          <label>Имя<input type="text" name="fullName" required></label>
+          <label>Email<input type="email" name="email" required></label>
+          <label>Пароль<input type="password" name="password" required minlength="6"></label>
+          <label>
+            Роль
+            <select name="role">
+              <option value="buyer">Покупатель</option>
+              <option value="seller">Продавец</option>
+            </select>
+          </label>
+          <button class="btn btn-dark" type="submit">Создать аккаунт</button>
+        </form>
+      </article>
+
+      <article class="product-card">
+        <h3>Вход</h3>
+        <form id="loginForm" class="order-form">
+          <label>Email<input type="email" name="email" required></label>
+          <label>Пароль<input type="password" name="password" required></label>
+          <button class="btn btn-dark" type="submit">Войти</button>
+        </form>
+        <button id="logoutBtn" class="btn btn-dark" type="button" style="margin-top:12px;">Выйти</button>
+      </article>
+    </div>
+  </section>
+
+  <section class="catalog-section">
+    <h2>Мой профиль</h2>
+    <div id="profileCard" class="product-card">
+      <p>Войдите, чтобы увидеть данные профиля.</p>
+    </div>
+  </section>
+
+  <section class="catalog-section">
+    <h2>Покупатель</h2>
+    <div class="halo-account-grid">
+      <article class="product-card">
+        <h3>История заказов</h3>
+        <button id="loadOrdersBtn" class="btn btn-dark" type="button">Обновить</button>
+        <div id="ordersList" class="halo-list"></div>
+      </article>
+      <article class="product-card">
+        <h3>Избранное</h3>
+        <button id="loadFavoritesBtn" class="btn btn-dark" type="button">Обновить</button>
+        <div id="favoritesList" class="halo-list"></div>
+      </article>
+      <article class="product-card">
+        <h3>Оформить заказ из корзины</h3>
+        <form id="checkoutForm" class="order-form">
+          <label>Способ доставки<input type="text" name="deliveryMethod" placeholder="Курьер / Самовывоз" required></label>
+          <label>Адрес доставки<input type="text" name="deliveryAddress" required></label>
+          <label>Оплата<input type="text" name="paymentMethod" placeholder="Kaspi / Карта / Наличные" required></label>
+          <button class="btn btn-dark" type="submit">Оформить заказ</button>
+        </form>
+      </article>
+    </div>
+  </section>
+
+  <section class="catalog-section">
+    <h2>Уведомления</h2>
+    <article class="product-card">
+      <div class="halo-inline-actions">
+        <button id="loadNotificationsBtn" class="btn btn-dark" type="button">Обновить</button>
+        <button id="markReadAllBtn" class="btn btn-dark" type="button">Прочитать все</button>
+      </div>
+      <div id="notificationsList" class="halo-list"></div>
+    </article>
+  </section>
+
+  <section class="catalog-section">
+    <h2>Продавец</h2>
+    <div class="halo-account-grid">
+      <article class="product-card">
+        <h3>Добавить товар</h3>
+        <form id="createProductForm" class="order-form">
+          <label>Название<input type="text" name="name" required></label>
+          <label>Категория<input type="text" name="categoryName" placeholder="Кольца / Браслеты..." required></label>
+          <label>Цена<input type="number" name="price" min="0" step="1" required></label>
+          <label>Материал<input type="text" name="material"></label>
+          <label>Размер<input type="text" name="size"></label>
+          <label>Остаток<input type="number" name="stock" min="0" value="1" required></label>
+          <label>Фото URL<input type="url" name="imageUrl"></label>
+          <label>Описание<textarea name="description" rows="3"></textarea></label>
+          <button class="btn btn-dark" type="submit">Сохранить товар</button>
+        </form>
+      </article>
+      <article class="product-card">
+        <h3>Мои товары</h3>
+        <button id="loadSellerProductsBtn" class="btn btn-dark" type="button">Обновить</button>
+        <div id="sellerProductsList" class="halo-list"></div>
+      </article>
+    </div>
+  </section>
+
+  <section class="catalog-section">
+    <h2>Администратор</h2>
+    <div class="halo-account-grid">
+      <article class="product-card">
+        <h3>Пользователи</h3>
+        <button id="loadAdminUsersBtn" class="btn btn-dark" type="button">Обновить</button>
+        <div id="adminUsersList" class="halo-list"></div>
+      </article>
+      <article class="product-card">
+        <h3>Заказы</h3>
+        <button id="loadAdminOrdersBtn" class="btn btn-dark" type="button">Обновить</button>
+        <div id="adminOrdersList" class="halo-list"></div>
+      </article>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© Halo, 2026. Все права защищены.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Корзина — Halo</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body id="cartPage">
+  <header class="header" style="min-height:auto;">
+    <nav class="nav">
+      <a href="index.html" class="logo">Halo</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <h1 class="page-title">Корзина</h1>
+
+  <section class="catalog-section">
+    <p id="cartEmpty" class="halo-help-text" hidden>Корзина пуста.</p>
+    <div id="cartItems" class="halo-list"></div>
+    <div class="product-card" style="margin-top:1rem;">
+      <h3>Итого: <span id="cartTotal">0 ₸</span></h3>
+    </div>
+  </section>
+
+  <section class="catalog-section">
+    <article class="product-card">
+      <h2>Оформить заказ</h2>
+      <form id="orderForm" class="order-form">
+        <label>
+          Способ доставки
+          <input type="text" name="deliveryMethod" placeholder="Курьер / Самовывоз" required>
+        </label>
+        <label>
+          Адрес доставки
+          <input type="text" name="deliveryAddress" placeholder="Город, улица, дом" required>
+        </label>
+        <label>
+          Способ оплаты
+          <input type="text" name="paymentMethod" placeholder="Карта / Наличные / Kaspi" required>
+        </label>
+        <button type="submit" class="btn btn-dark">Оформить заказ</button>
+      </form>
+    </article>
+  </section>
+
+  <footer class="footer">
+    <p>© Halo, 2026. Все права защищены.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
+

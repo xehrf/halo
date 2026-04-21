@@ -1,37 +1,29 @@
-# Halo Backend API
+﻿# Halo Backend API
 
-Backend для маркетплейса ювелирных изделий `Halo`:
-- авторизация (JWT)
+Backend для маркетплейса ювелирных изделий `Halo`.
+
+## Функции
+
+- JWT авторизация
 - роли `buyer / seller / admin`
-- товары (поиск + фильтры)
-- корзина
-- оформление заказа
-- seller/admin API
-- PostgreSQL
+- товары + поиск и фильтры
+- корзина и checkout
+- избранное
+- отзывы и рейтинг
+- уведомления о заказах
+- seller/admin endpoints
 
-## 1. Локальный запуск
+## Локальный запуск
 
-1. Установите зависимости:
 ```bash
 npm install
-```
-
-2. Создайте `.env` на основе `.env.example`.
-
-3. Примените схему БД и сиды:
-```bash
+copy .env.example .env
 npm run db:migrate
 npm run db:seed
-```
-
-4. Запустите сервер:
-```bash
 npm run dev
 ```
 
-API будет доступен на `http://localhost:8080`.
-
-## 2. Основные эндпоинты
+## Основные эндпоинты
 
 ### Auth
 - `POST /api/auth/register`
@@ -43,31 +35,35 @@ API будет доступен на `http://localhost:8080`.
 - `GET /api/products/:id`
 - `POST /api/products` (`seller/admin`)
 - `PUT /api/products/:id` (`seller/admin`)
-- `DELETE /api/products/:id` (`seller/admin`, soft delete)
+- `DELETE /api/products/:id` (`seller/admin`)
 
-Фильтры `GET /api/products`:
-- `search`
-- `category` (slug или имя)
-- `minPrice`
-- `maxPrice`
-- `material`
-- `size`
-- `sellerId`
-- `sort=newest|price_asc|price_desc|rating_desc`
-- `limit`
-- `offset`
-
-### Cart (`buyer/admin`)
+### Cart
 - `GET /api/cart`
 - `POST /api/cart/items`
 - `PATCH /api/cart/items/:itemId`
 - `DELETE /api/cart/items/:itemId`
 - `DELETE /api/cart/clear`
 
+### Favorites
+- `GET /api/favorites`
+- `POST /api/favorites/:productId`
+- `DELETE /api/favorites/:productId`
+
 ### Orders
-- `POST /api/orders/checkout` (`buyer/admin`)
-- `GET /api/orders/my` (`buyer/admin`)
-- `GET /api/orders/:id` (owner/admin)
+- `POST /api/orders/checkout`
+- `GET /api/orders/my`
+- `GET /api/orders/:id`
+
+### Reviews
+- `GET /api/reviews/product/:productId`
+- `POST /api/reviews/product/:productId`
+- `PUT /api/reviews/:reviewId`
+- `DELETE /api/reviews/:reviewId`
+
+### Notifications
+- `GET /api/notifications`
+- `PATCH /api/notifications/:id/read`
+- `PATCH /api/notifications/read-all`
 
 ### Seller
 - `GET /api/seller/products`
@@ -79,52 +75,22 @@ API будет доступен на `http://localhost:8080`.
 - `GET /api/admin/orders`
 - `PATCH /api/admin/orders/:id/status`
 
-## 3. Роли
+## Render деплой
 
-- При регистрации доступны только роли `buyer` и `seller`.
-- Чтобы назначить пользователя админом:
-```bash
-npm run admin:promote -- user@example.com
-```
+В репозитории уже есть `render.yaml`.
 
-## 4. Деплой на Render
+- `halo-api` и `halo-db` создаются через Blueprint
+- в `startCommand` настроены `db:migrate` и `db:seed`, поэтому Render Shell не обязателен
 
-В корне репозитория уже добавлен `render.yaml`:
-- web service `halo-api`
-- PostgreSQL `halo-db`
+## pgAdmin 4
 
-Что сделать:
-1. Запушить проект на GitHub.
-2. В Render выбрать `New +` -> `Blueprint`.
-3. Подключить репозиторий и применить `render.yaml`.
-4. После первого деплоя зайти в Shell сервиса и выполнить:
-```bash
-cd backend
-npm run db:migrate
-npm run db:seed
-```
+Подключайтесь к `halo-db` через `External Database URL`:
 
-## 5. Подключение pgAdmin 4 к Render PostgreSQL
-
-1. В Render откройте `halo-db`.
-2. Скопируйте `External Database URL` и разберите его на:
-- host
-- port (`5432`)
-- database
-- username
-- password
-3. В pgAdmin: `Create -> Server`.
-4. Вкладка `Connection`:
-- Host name/address: `host`
-- Port: `5432`
-- Maintenance database: `database`
-- Username: `username`
-- Password: `password`
-5. Вкладка `SSL`:
+- Host
+- Port `5432`
+- Database
+- Username
+- Password
 - SSL mode: `Require`
-6. Save.
 
-Примечание:
-- Backend на Render должен использовать `Internal Database URL` (это быстрее и безопаснее внутри Render).
-- Для внешних инструментов (pgAdmin) используйте `External Database URL`.
-
+Для backend в Render используйте `Internal Database URL`.

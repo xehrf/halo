@@ -4,6 +4,7 @@ const db = require("../config/db");
 const ApiError = require("../utils/api-error");
 const asyncHandler = require("../utils/async-handler");
 const { authenticate, requireRoles } = require("../middleware/auth");
+const { createNotification } = require("../utils/notifications");
 
 const router = express.Router();
 
@@ -145,38 +146,62 @@ router.patch(
 
     const payload = updateOrderStatusSchema.parse(req.body);
 
-    const updates = ["status = $1", "updated_at = NOW()"];
-    const values = [payload.status];
+    const updatedOrder = await db.withTransaction(async (client) => {
+      const existing = await client.query(
+        `SELECT id, buyer_id, status, payment_status
+         FROM orders
+         WHERE id = $1
+         FOR UPDATE`,
+        [orderId]
+      );
 
-    if (payload.paymentStatus !== undefined) {
-      values.push(payload.paymentStatus);
-      updates.push(`payment_status = $${values.length}`);
-    }
+      if (existing.rowCount === 0) {
+        throw new ApiError(404, "Order not found");
+      }
 
-    values.push(orderId);
-    const result = await db.query(
-      `UPDATE orders
-       SET ${updates.join(", ")}
-       WHERE id = $${values.length}
-       RETURNING id, status, payment_status, updated_at`,
-      values
-    );
+      const updates = ["status = $1", "updated_at = NOW()"];
+      const values = [payload.status];
 
-    if (result.rowCount === 0) {
-      throw new ApiError(404, "Order not found");
-    }
+      if (payload.paymentStatus !== undefined) {
+        values.push(payload.paymentStatus);
+        updates.push(`payment_status = $${values.length}`);
+      }
+
+      values.push(orderId);
+      const result = await client.query(
+        `UPDATE orders
+         SET ${updates.join(", ")}
+         WHERE id = $${values.length}
+         RETURNING id, buyer_id, status, payment_status, updated_at`,
+        values
+      );
+
+      const row = result.rows[0];
+      await createNotification(client, {
+        userId: Number(row.buyer_id),
+        type: "order",
+        title: "Статус заказа обновлен",
+        message: `Заказ #${row.id} теперь имеет статус "${row.status}".`,
+        metadata: {
+          orderId: Number(row.id),
+          status: row.status,
+          paymentStatus: row.payment_status,
+        },
+      });
+
+      return row;
+    });
 
     res.json({
       message: "Order status updated",
       order: {
-        id: Number(result.rows[0].id),
-        status: result.rows[0].status,
-        paymentStatus: result.rows[0].payment_status,
-        updatedAt: result.rows[0].updated_at,
+        id: Number(updatedOrder.id),
+        status: updatedOrder.status,
+        paymentStatus: updatedOrder.payment_status,
+        updatedAt: updatedOrder.updated_at,
       },
     });
   })
 );
 
 module.exports = router;
-

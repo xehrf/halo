@@ -3,87 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Обручальное кольцо — Ювелирный салон</title>
+  <title>Обручальное кольцо — Halo</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="header" style="min-height: auto;">
+  <header class="header" style="min-height:auto;">
     <nav class="nav">
-      <a href="index.html" class="logo">Ювелирный салон</a>
+      <a href="index.html" class="logo">Halo</a>
       <ul class="nav-links">
         <li><a href="index.html">Главная</a></li>
         <li><a href="catalog.html">Каталог</a></li>
-        <li><a href="contacts.html">Контакты</a></li>
+        <li><a href="account.html">Кабинет</a></li>
       </ul>
     </nav>
   </header>
 
   <main class="product-detail">
     <section class="product-detail-main">
-      <div class="product-detail-gallery" data-product="ring2">
+      <div class="product-detail-gallery">
         <div class="zoom-image-wrapper">
           <img src="images/ring1.jpg" alt="Обручальное кольцо" class="zoom-image">
         </div>
         <div class="product-thumbs">
-          <button class="thumb is-active" data-image="images/ring1.jpg">
-            <img src="images/ring.jpg" alt="Кольцо с фианитом — вид 1">
-          </button>
-          <button class="thumb" data-image="images/ring2.png">
-            <img src="images/ring.png" alt="Кольцо с фианитом — вид 2">
-          </button>
-          <button class="thumb" data-image="images/ring3.png">
-            <img src="images/ring.png" alt="Кольцо с фианитом — вид 3">
-          </button>
+          <button class="thumb is-active" data-image="images/ring1.jpg"><img src="images/ring1.jpg" alt="Фото 1"></button>
+          <button class="thumb" data-image="images/ring2.png"><img src="images/ring2.png" alt="Фото 2"></button>
+          <button class="thumb" data-image="images/ring3.png"><img src="images/ring3.png" alt="Фото 3"></button>
         </div>
-
       </div>
-
       <div class="product-detail-info">
         <h1>Обручальное кольцо</h1>
         <p class="product-detail-price">28 000 ₸</p>
-        <p class="product-detail-meta">Золото 955°</p>
-
-        <p class="product-detail-desc">
-          Обручальное кольцо, мечта каждой 
-        </p>
-
-        <form class="order-form">
-          <label>
-            Размер
-            <select name="size">
-              <option>16</option>
-              <option>16,5</option>
-              <option>17</option>
-              <option>17,5</option>
-              <option>18</option>
-            </select>
-          </label>
-
-          <label>
-            Имя
-            <input type="text" name="name" placeholder="Как к вам обращаться">
-          </label>
-
-          <label>
-            Телефон
-            <input type="tel" name="phone" placeholder="+7 (___) ___-__-__">
-          </label>
-
-          <button type="submit" class="btn order-btn">Оформить заявку</button>
-          <p class="order-note">Мы перезвоним, чтобы уточнить детали и подтвердить заказ.</p>
-        </form>
+        <p class="product-detail-meta">Материал: золото 585° · Тип: классическое</p>
+        <p class="product-detail-desc">Классический вариант обручального кольца с мягкой полировкой и комфортной посадкой на каждый день.</p>
+        <a href="catalog.html" class="btn btn-dark">Вернуться в каталог</a>
       </div>
     </section>
   </main>
 
   <footer class="footer">
-    <p>© Ювелирный салон. Все права защищены.</p>
-    <p><a href="contacts.html">Контакты</a></p>
+    <p>© Halo, 2026. Все права защищены.</p>
   </footer>
-
   <script src="script.js"></script>
 </body>
 </html>
+

@@ -5,4 +5,3 @@ VALUES
   ('Цепочки', 'tsepochki'),
   ('Серьги', 'sergi')
 ON CONFLICT (slug) DO NOTHING;
-

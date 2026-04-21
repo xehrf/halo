@@ -68,62 +68,64 @@ router.get(
   })
 );
 
-router.post(
-  "/items",
-  asyncHandler(async (req, res) => {
-    const payload = addItemSchema.parse(req.body);
+const addItemHandler = asyncHandler(async (req, res) => {
+  const payload = addItemSchema.parse(req.body);
 
-    await db.withTransaction(async (client) => {
-      const product = await client.query(
-        `SELECT id, name, stock, is_active
-         FROM products
-         WHERE id = $1
-         FOR UPDATE`,
-        [payload.productId]
+  await db.withTransaction(async (client) => {
+    const product = await client.query(
+      `SELECT id, name, stock, is_active
+       FROM products
+       WHERE id = $1
+       FOR UPDATE`,
+      [payload.productId]
+    );
+
+    if (product.rowCount === 0 || !product.rows[0].is_active) {
+      throw new ApiError(404, "Product not found or unavailable");
+    }
+
+    const current = await client.query(
+      `SELECT id, quantity
+       FROM cart_items
+       WHERE user_id = $1 AND product_id = $2
+       FOR UPDATE`,
+      [req.user.id, payload.productId]
+    );
+
+    const currentQty = current.rowCount ? Number(current.rows[0].quantity) : 0;
+    const nextQty = currentQty + payload.quantity;
+
+    if (nextQty > Number(product.rows[0].stock)) {
+      throw new ApiError(400, "Requested quantity exceeds available stock");
+    }
+
+    if (current.rowCount) {
+      await client.query(
+        `UPDATE cart_items
+         SET quantity = $1, updated_at = NOW()
+         WHERE id = $2`,
+        [nextQty, current.rows[0].id]
       );
-
-      if (product.rowCount === 0 || !product.rows[0].is_active) {
-        throw new ApiError(404, "Product not found or unavailable");
-      }
-
-      const current = await client.query(
-        `SELECT id, quantity
-         FROM cart_items
-         WHERE user_id = $1 AND product_id = $2
-         FOR UPDATE`,
-        [req.user.id, payload.productId]
+    } else {
+      await client.query(
+        `INSERT INTO cart_items (user_id, product_id, quantity)
+         VALUES ($1, $2, $3)`,
+        [req.user.id, payload.productId, payload.quantity]
       );
+    }
+  });
 
-      const currentQty = current.rowCount ? Number(current.rows[0].quantity) : 0;
-      const nextQty = currentQty + payload.quantity;
+  const cart = await getCartSnapshot(db, req.user.id);
+  res.status(201).json({
+    message: "Item added to cart",
+    ...cart,
+  });
+});
 
-      if (nextQty > Number(product.rows[0].stock)) {
-        throw new ApiError(400, "Requested quantity exceeds available stock");
-      }
-
-      if (current.rowCount) {
-        await client.query(
-          `UPDATE cart_items
-           SET quantity = $1, updated_at = NOW()
-           WHERE id = $2`,
-          [nextQty, current.rows[0].id]
-        );
-      } else {
-        await client.query(
-          `INSERT INTO cart_items (user_id, product_id, quantity)
-           VALUES ($1, $2, $3)`,
-          [req.user.id, payload.productId, payload.quantity]
-        );
-      }
-    });
-
-    const cart = await getCartSnapshot(db, req.user.id);
-    res.status(201).json({
-      message: "Item added to cart",
-      ...cart,
-    });
-  })
-);
+// Compatibility endpoint expected by frontend integrations:
+// POST /api/cart { productId, quantity }
+router.post("/", addItemHandler);
+router.post("/items", addItemHandler);
 
 router.patch(
   "/items/:itemId",
@@ -218,4 +220,3 @@ router.delete(
 );
 
 module.exports = router;
-

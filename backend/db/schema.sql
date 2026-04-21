@@ -93,6 +93,29 @@ CREATE TABLE IF NOT EXISTS favorites (
   UNIQUE (user_id, product_id)
 );
 
+CREATE TABLE IF NOT EXISTS reviews (
+  id BIGSERIAL PRIMARY KEY,
+  product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  rating SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (product_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  type VARCHAR(40) NOT NULL DEFAULT 'system',
+  title VARCHAR(180) NOT NULL,
+  message TEXT NOT NULL,
+  metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+  is_read BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  read_at TIMESTAMPTZ
+);
+
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER
 AS $$
@@ -132,6 +155,43 @@ BEFORE UPDATE ON orders
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
 
+DROP TRIGGER IF EXISTS trg_reviews_updated_at ON reviews;
+CREATE TRIGGER trg_reviews_updated_at
+BEFORE UPDATE ON reviews
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
+CREATE OR REPLACE FUNCTION refresh_product_rating(target_product_id BIGINT)
+RETURNS VOID
+AS $$
+BEGIN
+  UPDATE products p
+  SET
+    rating_avg = COALESCE(stats.avg_rating, 0),
+    rating_count = COALESCE(stats.total_reviews, 0),
+    updated_at = NOW()
+  FROM (
+    SELECT
+      product_id,
+      ROUND(AVG(rating)::numeric, 2) AS avg_rating,
+      COUNT(*)::int AS total_reviews
+    FROM reviews
+    WHERE product_id = target_product_id
+    GROUP BY product_id
+  ) AS stats
+  WHERE p.id = target_product_id;
+
+  IF NOT FOUND THEN
+    UPDATE products
+    SET
+      rating_avg = 0,
+      rating_count = 0,
+      updated_at = NOW()
+    WHERE id = target_product_id;
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
 CREATE INDEX IF NOT EXISTS idx_products_seller_id ON products(seller_id);
 CREATE INDEX IF NOT EXISTS idx_products_price ON products(price);
@@ -142,4 +202,7 @@ CREATE INDEX IF NOT EXISTS idx_cart_items_user_id ON cart_items(user_id);
 CREATE INDEX IF NOT EXISTS idx_orders_buyer_id ON orders(buyer_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_seller_id ON order_items(seller_id);
-
+CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
+CREATE INDEX IF NOT EXISTS idx_notifications_unread ON notifications(user_id, is_read);

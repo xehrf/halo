@@ -4,6 +4,7 @@ const db = require("../config/db");
 const ApiError = require("../utils/api-error");
 const asyncHandler = require("../utils/async-handler");
 const { authenticate, requireRoles } = require("../middleware/auth");
+const { createNotification } = require("../utils/notifications");
 
 const router = express.Router();
 
@@ -148,6 +149,131 @@ router.post(
         );
       }
 
+      await createNotification(client, {
+        userId: req.user.id,
+        type: "order",
+        title: "Заказ создан",
+        message: `Ваш заказ #${orderId} успешно оформлен и ожидает подтверждения.`,
+        metadata: { orderId, status: "pending" },
+      });
+
+      const sellerIds = [...new Set(cartItems.rows.map((item) => Number(item.seller_id)).filter(Boolean))];
+      for (const sellerId of sellerIds) {
+        await createNotification(client, {
+          userId: sellerId,
+          type: "order",
+          title: "Новый заказ",
+          message: `Поступил новый заказ #${orderId} с вашими товарами.`,
+          metadata: { orderId, sellerId },
+        });
+      }
+
+      await client.query("DELETE FROM cart_items WHERE user_id = $1", [req.user.id]);
+
+      return fetchOrderById(client, orderId);
+    });
+
+    res.status(201).json({
+      message: "Order placed successfully",
+      order,
+    });
+  })
+);
+
+router.post(
+  "/",
+  requireRoles("buyer", "admin"),
+  asyncHandler(async (req, res) => {
+    const payload = checkoutSchema.parse(req.body);
+
+    const order = await db.withTransaction(async (client) => {
+      const cartItems = await client.query(
+        `SELECT
+           ci.product_id,
+           ci.quantity,
+           p.name AS product_name,
+           p.price,
+           p.stock,
+           p.seller_id,
+           p.is_active
+         FROM cart_items ci
+         JOIN products p ON p.id = ci.product_id
+         WHERE ci.user_id = $1
+         FOR UPDATE OF p, ci`,
+        [req.user.id]
+      );
+
+      if (cartItems.rowCount === 0) {
+        throw new ApiError(400, "Cart is empty");
+      }
+
+      let totalAmount = 0;
+      for (const item of cartItems.rows) {
+        if (!item.is_active) {
+          throw new ApiError(400, `Product "${item.product_name}" is unavailable`);
+        }
+        if (Number(item.stock) < Number(item.quantity)) {
+          throw new ApiError(400, `Not enough stock for "${item.product_name}"`);
+        }
+        totalAmount += Number(item.price) * Number(item.quantity);
+      }
+
+      const createdOrder = await client.query(
+        `INSERT INTO orders
+         (buyer_id, status, total_amount, delivery_method, delivery_address, payment_method, payment_status)
+         VALUES
+         ($1, 'pending', $2, $3, $4, $5, 'unpaid')
+         RETURNING id`,
+        [req.user.id, totalAmount, payload.deliveryMethod, payload.deliveryAddress, payload.paymentMethod]
+      );
+
+      const orderId = Number(createdOrder.rows[0].id);
+
+      for (const item of cartItems.rows) {
+        const lineTotal = Number(item.price) * Number(item.quantity);
+        await client.query(
+          `INSERT INTO order_items
+           (order_id, product_id, seller_id, product_name, unit_price, quantity, line_total)
+           VALUES
+           ($1, $2, $3, $4, $5, $6, $7)`,
+          [
+            orderId,
+            item.product_id,
+            item.seller_id,
+            item.product_name,
+            Number(item.price),
+            Number(item.quantity),
+            lineTotal,
+          ]
+        );
+
+        await client.query(
+          `UPDATE products
+           SET stock = stock - $1, updated_at = NOW()
+           WHERE id = $2`,
+          [item.quantity, item.product_id]
+        );
+      }
+
+      await createNotification(client, {
+        userId: req.user.id,
+        type: "order",
+        title: "Заказ создан",
+        message: `Ваш заказ #${orderId} успешно оформлен и ожидает подтверждения.`,
+        metadata: { orderId, status: "pending" },
+      });
+
+      const sellerIds = [...new Set(cartItems.rows.map((item) => Number(item.seller_id)).filter(Boolean))];
+      for (const sellerId of sellerIds) {
+        await createNotification(client, {
+          userId: sellerId,
+          type: "order",
+          title: "Новый заказ",
+          message: `Поступил новый заказ #${orderId} с вашими товарами.`,
+          metadata: { orderId, sellerId },
+        });
+      }
+
       await client.query("DELETE FROM cart_items WHERE user_id = $1", [req.user.id]);
 
       return fetchOrderById(client, orderId);
@@ -210,4 +336,3 @@ router.get(
 );
 
 module.exports = router;
-

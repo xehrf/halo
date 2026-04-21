@@ -3,124 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Каталог — Ювелирный магазин</title>
+  <title>Каталог — Halo</title>
+  <meta name="description" content="Каталог Halo: фильтры по цене, материалу, размеру и категориям.">
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header class="header" style="min-height: auto;">
+  <header class="header" style="min-height:auto;">
     <nav class="nav">
-      <a href="index.html" class="logo">Ювелирный салон</a>
+      <a href="index.html" class="logo">Halo</a>
       <ul class="nav-links">
         <li><a href="index.html">Главная</a></li>
         <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="account.html">Кабинет</a></li>
         <li><a href="contacts.html">Контакты</a></li>
       </ul>
     </nav>
   </header>
 
-  <h1 class="page-title">Каталог</h1>
+  <h1 class="page-title">Каталог Halo</h1>
 
-  <section class="catalog-section" id="rings">
-    <h2>Кольца</h2>
-    <div class="products-grid">
-      <div class="product-card">
-        <div class="product-image" data-detail="ring1.html" data-video="video/ring1.mp4">
-          <img src="images/ring1.jpg" alt="Кольцо с фианитом крупным планом">
-        </div>
-        <h3>Кольцо с фианитом</h3>
-        <p class="price">12 500 ₸</p>
+  <section class="catalog-section">
+    <form id="catalogFilters" class="halo-filter-grid">
+      <label>
+        Поиск
+        <input type="text" name="search" placeholder="Название или описание">
+      </label>
+      <label>
+        Категория
+        <select name="category">
+          <option value="">Все</option>
+          <option value="koltsa">Кольца</option>
+          <option value="braslety">Браслеты</option>
+          <option value="tsepochki">Цепочки</option>
+          <option value="sergi">Серьги</option>
+        </select>
+      </label>
+      <label>
+        Материал
+        <input type="text" name="material" placeholder="Золото, серебро...">
+      </label>
+      <label>
+        Размер
+        <input type="text" name="size" placeholder="16, 17.5, M...">
+      </label>
+      <label>
+        Цена от
+        <input type="number" name="minPrice" min="0" step="1">
+      </label>
+      <label>
+        Цена до
+        <input type="number" name="maxPrice" min="0" step="1">
+      </label>
+      <label>
+        Сортировка
+        <select name="sort">
+          <option value="newest">Сначала новые</option>
+          <option value="price_asc">Цена по возрастанию</option>
+          <option value="price_desc">Цена по убыванию</option>
+          <option value="rating_desc">По рейтингу</option>
+        </select>
+      </label>
+      <div class="halo-filter-actions">
+        <button type="submit" class="btn btn-dark">Применить</button>
+        <button type="button" class="btn btn-dark" id="filtersReset">Сбросить</button>
       </div>
-      
-      <div class="product-card">
-        <div class="product-image" data-detail="ring2.html">
-          <img src="images/placeholder.svg" alt="Обручальное кольцо">
-        </div>
-        <h3>Обручальное кольцо</h3>
-        <p class="price">28 000 ₸</p>
-      </div>
-      <div class="product-card">
-        <div class="product-image">
-          <img src="images/placeholder.svg" alt="Кольцо из белого золота">
-        </div>
-        <h3>Кольцо из белого золота</h3>
-        <p class="price">35 200 ₸</p>
-      </div>
-    </div>
-  </section>
+    </form>
 
-  <section class="catalog-section" id="earrings">
-    <h2>Серьги</h2>
-    <div class="products-grid">
-      <div class="product-card">
-        <div class="product-image">
-          <img src="images/placeholder.svg" alt="Серьги-гвоздики">
-        </div>
-        <h3>Серьги-гвоздики</h3>
-        <p class="price">8 900 ₸</p>
-      </div>
-      <div class="product-card">
-        <div class="product-image">
-          <img src="images/placeholder.svg" alt="Серьги с жемчугом">
-        </div>
-        <h3>Серьги с жемчугом</h3>
-        <p class="price">15 400 ₸</p>
-      </div>
-      <div class="product-card">
-        <div class="product-image">
-          <img src="images/placeholder.svg" alt="Подвесные серьги">
-        </div>
-        <h3>Подвесные серьги</h3>
-        <p class="price">22 100 ₸</p>
-      </div>
-    </div>
-  </section>
+    <p class="halo-help-text">Виды товаров: обручальные кольца, кольца с камнем, жесткие и цепные браслеты, якорные и панцирные цепочки, пусеты и подвесные серьги.</p>
 
-  <section class="catalog-section" id="bracelets">
-    <h2>Браслеты</h2>
-    <div class="products-grid">
-      <div class="product-card">
-        <div class="product-image">
-          <img src="images/placeholder.svg" alt="Браслет-цепочка">
-        </div>
-        <h3>Браслет-цепочка</h3>
-        <p class="price">18 700 ₸</p>
-      </div>
-      <div class="product-card">
-        <div class="product-image">
-          <img src="images/placeholder.svg" alt="Браслет с подвесками">
-        </div>
-        <h3>Браслет с подвесками</h3>
-        <p class="price">24 300 ₸</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="catalog-section" id="pendants">
-    <h2>Подвески</h2>
-    <div class="products-grid">
-      <div class="product-card">
-        <div class="product-image">
-          <img src="images/placeholder.svg" alt="Подвеска-сердечко">
-        </div>
-        <h3>Подвеска-сердечко</h3>
-        <p class="price">9 800 ₸</p>
-      </div>
-      <div class="product-card">
-        <div class="product-image">
-          <img src="images/placeholder.svg" alt="Подвеска с камнем">
-        </div>
-        <h3>Подвеска с камнем</h3>
-        <p class="price">14 600 ₸</p>
-      </div>
-    </div>
+    <div id="catalogMessage" class="halo-message" role="status" aria-live="polite"></div>
+    <div id="catalogList" class="products-grid catalog-grid"></div>
   </section>
 
   <footer class="footer">
-    <p>© Ювелирный салон. Все права защищены.</p>
-    <p><a href="contacts.html">Контакты</a></p>
+    <p>© Halo, 2026. Все права защищены.</p>
+    <p>
+      <a href="delivery.html">Доставка</a> ·
+      <a href="returns.html">Возврат</a> ·
+      <a href="about.html">О магазине</a>
+    </p>
   </footer>
 
   <script src="script.js"></script>

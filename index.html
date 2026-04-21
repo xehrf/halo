@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ювелирный магазин — изысканные украшения</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* Обёртка header — фиксируем высоту и позицию */
+    .header {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Фоновая картинка hero */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
+      /* Поверх картинки — тёмный оверлей чтобы текст читался */
+      filter: brightness(0.45);
+      will-change: opacity;
+    }
+
+    /* Навигация и hero-контент должны быть поверх картинки */
+    .nav {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+
+    <!-- Фоновая картинка — замени src на свой файл -->
+    <img
+      id="heroBg"
+      class="hero-bg"
+      src="images/hero.jpg"
+      alt=""
+      aria-hidden="true"
+    >
+
+    <nav class="nav">
+      <a href="index.html" class="logo">Ювелирный салон</a>
+      <ul class="nav-links">
+        <li><a href="index.html">Главная</a></li>
+        <li><a href="catalog.html">Каталог</a></li>
+        <li><a href="contacts.html">Контакты</a></li>
+      </ul>
+    </nav>
+    <div class="hero">
+      <h1>Украшения, которые остаются</h1>
+      <p>Золото, серебро и драгоценные камни — для особых моментов</p>
+      <a href="catalog.html" class="btn">Смотреть каталог</a>
+    </div>
+  </header>
+
+  <section class="features">
+    <h2>Почему мы</h2>
+    <div class="features-grid">
+      <div class="feature">
+        <span class="feature-icon">◆</span>
+        <h3>Качество</h3>
+        <p>Сертифицированные материалы и ручная работа</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">◆</span>
+        <h3>Гарантия</h3>
+        <p>Официальная гарантия на все изделия</p>
+      </div>
+      <div class="feature">
+        <span class="feature-icon">◆</span>
+        <h3>Доставка</h3>
+        <p>Бережная упаковка и доставка по всей стране</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="categories-preview">
+    <h2>Категории</h2>
+    <div class="categories-grid">
+      <a href="catalog.html#rings" class="category-card">
+        <div class="category-placeholder">Кольца</div>
+      </a>
+      <a href="catalog.html#earrings" class="category-card">
+        <div class="category-placeholder">Серьги</div>
+      </a>
+      <a href="catalog.html#bracelets" class="category-card">
+        <div class="category-placeholder">Браслеты</div>
+      </a>
+      <a href="catalog.html#pendants" class="category-card">
+        <div class="category-placeholder">Подвески</div>
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© Ювелирный салон. Все права защищены.</p>
+    <p><a href="contacts.html">Контакты</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <script>
+    const heroBg = document.getElementById('heroBg');
+    const header = document.querySelector('.header');
+
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY;
+      const headerHeight = header.offsetHeight;
+
+      // Картинка исчезает пока скроллим на высоту header (100vh)
+      const opacity = 1 - (scrollY / headerHeight);
+
+      heroBg.style.opacity = Math.max(0, Math.min(1, opacity));
+    }, { passive: true });
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800" role="img" aria-label="Ring">
+  <defs>
+    <radialGradient id="bg" cx="40%" cy="30%" r="80%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f0eeeb"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d9b45a"/>
+      <stop offset="0.5" stop-color="#8b6914"/>
+      <stop offset="1" stop-color="#f1d47a"/>
+    </linearGradient>
+    <linearGradient id="gem" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#dff4ff"/>
+      <stop offset="1" stop-color="#9fd1ff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#bg)"/>
+
+  <g fill="none" stroke="url(#gold)" stroke-width="54" stroke-linecap="round" opacity="0.98">
+    <circle cx="400" cy="470" r="190"/>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.35">
+    <path d="M255 420 C320 350, 480 330, 545 410"/>
+  </g>
+
+  <g transform="translate(0,-30)">
+    <circle cx="400" cy="250" r="78" fill="url(#gem)" stroke="#6aa8d6" stroke-width="8"/>
+    <path d="M400 175 L448 235 L400 325 L352 235 Z" fill="#ffffff" opacity="0.35"/>
+    <path d="M345 250 L400 205 L455 250 L400 295 Z" fill="#bfe8ff" opacity="0.55"/>
+    <g fill="none" stroke="#8b6914" stroke-width="14" stroke-linecap="round" opacity="0.9">
+      <path d="M330 300 C350 335, 450 335, 470 300"/>
+      <path d="M355 315 C370 350, 430 350, 445 315"/>
+    </g>
+  </g>
+
+  <text x="50%" y="90%" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#2c2c2c" opacity="0.75">
+    Ring
+  </text>
+</svg>
